@@ -86,8 +86,12 @@ module CanCan
       assign_attributes(resource)
     end
 
+    def assign_parent_resource? resource
+      @options[:singleton] && parent_resource && resource.respond_to?(:"#{parent_name}=")
+    end
+
     def assign_attributes(resource)
-      resource.send("#{parent_name}=", parent_resource) if @options[:singleton] && parent_resource
+      resource.send("#{parent_name}=", parent_resource) if assign_parent_resource?(resource)
       initial_attributes.each do |attr_name, value|
         resource.send("#{attr_name}=", value)
       end
